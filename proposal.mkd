@@ -1,0 +1,88 @@
+
+##Series-Expansion
+
+#Overview:
+
+I'll first clarify the basics of notation/naming conventions of series so that
+the discussion is self contained.
+
+Function/expressions usually have a series expansion of one of the following
+forms:
+* Taylor series
+* Laurent series
+* Puiseux series
+* Asymptotic series
+
+A Taylor series is a power series that has only non-negative powers and is
+defined for functions that are analytic on a disc. A Laurent series is also 
+a power series but with negative powers as well and is defined for functions
+analytic on an annulus. A Puiseux is similar to Laurent series but is special
+in that it allows fractional powers of the variable.
+
+#Motivation
+
+Currently CSympy lacks the ability to compute the series expansion of any 
+function. Series expansion is the starting point for many algorithms and is 
+required in a lot of mathematical operations like, integration, solving 
+differential equations, function approximation, etc. Since the goal of CSympy
+is to be the fastest in its field, some of the most important topics that are
+usually 'slow', are not possible without a decent function expansion support.
+
+##Plan
+
+There are two ways to return any expansion. We either return a specified 
+nummber of terms or else we return a generator that can return the next term
+as many times as the user wants. The former is implemented in Sympy as
+`nseries` while the latter, called lazy expansion is implemented as `lseries`.
+Sympy's `lseries` is rather slow as by default, it internally uses `nseries`
+repeatedly.
+
+One issue with `nseries` is that given a nested function, you never know how
+many terms you need to expand in the innermost function to finally get the
+desired order. There are two ways to tackle this:
+1. Start with 'n' terms in the innermost part and if the order falls short,
+   keep increasing 'n' till you get the desired order.
+2. Start with 'n' terms in the innermost part and output whatever ordered 
+   expansion you get. This method would be much faster than the 1st one
+   but there is no guarantee you'd get the requested order.
+
+#API
+
+Given that CSympy is in C++, there is no avoiding a 'Series class' based API,
+as opposed to the treatment of series as another `Add` expression done in
+Sympy.
+
+There are again(!) two ways to deal with this:
+
+1.The `Series` class will store the basic information about the series like,
+ expansion point, coefficients, variable, etc. A `PowerSeries` or
+ `TaylorSeries` will derive from this base class. The advantage of this is that
+ we can easily add new series by subclassing them to `Series`. Moreover we can
+ easily implement sub-classes tailor-made for specific series. For example,
+ a Taylor or Laurent series needs a variable of 'int' datatype to hold the
+ powers of the variables. However we'll need 'Rational number' datatype to hold
+ this piece of information in case of Puiseux series. Having separate Taylor
+ and Puiseux series easily solves this problem.
+
+ In many cases it is useful for the user to be able to decide which type of
+ series expansion to apply and have know beforehand what sort of a series he'd get.
+
+
+2. There will be just one `Series` class holding all the information about the
+  series. Results of arithmetic operations on series will also be object of this
+  Series class. Ginac has a similar `pseries` class.
+
+Note: 1. A power series may not be associated with any function and may simply
+be dependent on its coefficients. Taylor series on the other hand, must be
+associated with a function. The taylor series is equal to its function only for
+analytic functions.  2. Currently `(1/(1-x)).series(x)` returns a Taylor series
+which is valid only for |x| < 1. However, the ouput doesn't make that
+distinction. We need to have the capability to determine the domain over which
+the given function is analytic and check if a taylor expansion can be dont
+about the specified point.
+
+References: [1] A prototype Series implementation:
+https://github.com/sympy/sympy/wiki/UD-Sequences-and-formal-power-series-prototype
+[2] Excellent document of how to implement series expansion:
+   https://github.com/sympy/sympy/wiki/UD-series-user-interface
+[3] Computing laurent series: http://mathfaculty.fullerton.edu/mathews//c2003/LaurentSeriesMod.html
