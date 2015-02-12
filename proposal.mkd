@@ -80,11 +80,6 @@ Note:
    associated with a function. The taylor series is equal to its function only
    for analytic functions.
 
-2. Currently `(1/(1-x)).series(x)` returns a Taylor series which is valid only
-   for |x| < 1. However, the ouput doesn't make that distinction. We need to
-   have the capability to determine the domain over which the given function is
-   analytic and check if a taylor expansion can be dont about the specified
-   point.
 
 References: 
 [1] A prototype Series implementation:
