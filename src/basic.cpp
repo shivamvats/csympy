@@ -9,6 +9,7 @@
 #include "constants.h"
 #include "functions.h"
 #include "polynomial.h"
+#include "printer.h"
 
 namespace CSymPy {
 
@@ -31,6 +32,12 @@ std::string Basic::__str__() const
     s << "<" << typeName<Basic>(*this)
         << " instance at " << (const void*)this << ">";
     return s.str();
+}
+
+std::string Basic::__str2__() const
+{
+    StrPrinter strPrinter;
+    return strPrinter.apply(*this);
 }
 
 RCP<const Basic> expand(const RCP<const Basic> &self)
