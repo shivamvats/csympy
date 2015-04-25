@@ -56,6 +56,7 @@ public:
     virtual void visit(const ACosh &) = 0;
     virtual void visit(const ATanh &) = 0;
     virtual void visit(const ACoth &) = 0;
+    virtual void visit(const ASech &) = 0;
     virtual void visit(const KroneckerDelta &) = 0;
     virtual void visit(const LeviCivita &) = 0;
     virtual void visit(const Zeta &) = 0;
@@ -181,6 +182,7 @@ public:
     virtual void visit(const ACosh &) { };
     virtual void visit(const ATanh &) { };
     virtual void visit(const ACoth &) { };
+    virtual void visit(const ASech &) { };
     virtual void visit(const KroneckerDelta &) { };
     virtual void visit(const LeviCivita &) { };
     virtual void visit(const Zeta &) { };
@@ -245,6 +247,7 @@ public:
     virtual void visit(const ACosh &) { };
     virtual void visit(const ATanh &) { };
     virtual void visit(const ACoth &) { };
+    virtual void visit(const ASech &) { };
     virtual void visit(const KroneckerDelta &) { };
     virtual void visit(const LeviCivita &) { };
     virtual void visit(const Zeta &) { };
