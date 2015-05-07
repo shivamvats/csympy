@@ -17,7 +17,7 @@
 #include "complex.h"
 #include "constants.h"
 
-namespace CSymPy {
+namespace SymEngine {
 
 class Polynomial;
 
@@ -264,6 +264,6 @@ public:
 RCP<const Basic> coeff(const Basic &b, const RCP<const Symbol> &x,
         const RCP<const Integer> &n);
 
-} // CSymPy
+} // SymEngine
 
 #endif
