@@ -32,6 +32,7 @@ set(SRC
     diophantine.cpp
     cwrapper.cpp
     printer.cpp
+    real_double.cpp
 )
 
 # Needed for "make install"
@@ -40,7 +41,7 @@ set(HEADERS
     basic.h      symengine_rcp.h     integer.h    mul.h        pow.h       constants.h
     symbol.h
     basic-inl.h  dict.h           matrix.h     ntheory.h    rational.h complex.h
-    visitor.h    eval_double.h    diophantine.h cwrapper.h  printer.h
+    visitor.h    eval_double.h    diophantine.h cwrapper.h  printer.h  real_double.h
 )
 
 # Configure SymEngine using our CMake options:
