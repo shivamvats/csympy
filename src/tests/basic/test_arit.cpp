@@ -11,37 +11,43 @@
 #include "functions.h"
 #include "complex.h"
 #include "constants.h"
+#include "real_double.h"
 
-using CSymPy::Basic;
-using CSymPy::Add;
-using CSymPy::Mul;
-using CSymPy::Pow;
-using CSymPy::Log;
-using CSymPy::Symbol;
-using CSymPy::umap_basic_num;
-using CSymPy::map_vec_int;
-using CSymPy::Integer;
-using CSymPy::integer;
-using CSymPy::multinomial_coefficients;
-using CSymPy::one;
-using CSymPy::zero;
-using CSymPy::sin;
-using CSymPy::RCP;
-using CSymPy::rcp;
-using CSymPy::sqrt;
-using CSymPy::pow;
-using CSymPy::add;
-using CSymPy::mul;
-using CSymPy::div;
-using CSymPy::sub;
-using CSymPy::exp;
-using CSymPy::E;
-using CSymPy::Rational;
-using CSymPy::Complex;
-using CSymPy::Number;
-using CSymPy::I;
-using CSymPy::rcp_dynamic_cast;
-using CSymPy::print_stack_on_segfault;
+using SymEngine::Basic;
+using SymEngine::Add;
+using SymEngine::Mul;
+using SymEngine::Pow;
+using SymEngine::Log;
+using SymEngine::Symbol;
+using SymEngine::symbol;
+using SymEngine::umap_basic_num;
+using SymEngine::map_vec_int;
+using SymEngine::Integer;
+using SymEngine::integer;
+using SymEngine::multinomial_coefficients;
+using SymEngine::one;
+using SymEngine::zero;
+using SymEngine::sin;
+using SymEngine::RCP;
+using SymEngine::rcp;
+using SymEngine::sqrt;
+using SymEngine::pow;
+using SymEngine::add;
+using SymEngine::mul;
+using SymEngine::div;
+using SymEngine::sub;
+using SymEngine::exp;
+using SymEngine::E;
+using SymEngine::Rational;
+using SymEngine::Complex;
+using SymEngine::Number;
+using SymEngine::I;
+using SymEngine::rcp_dynamic_cast;
+using SymEngine::rcp_static_cast;
+using SymEngine::print_stack_on_segfault;
+using SymEngine::RealDouble;
+using SymEngine::real_double;
+using SymEngine::is_a;
 
 void test_add()
 {
@@ -92,7 +98,11 @@ void test_add()
     r2 = add(r1, r2);
     assert(eq(r3, r2));
 
-
+    r1 = real_double(0.1);
+    r2 = Rational::from_mpq(mpq_class(1, 2));
+    r3 = add(add(add(r1, r2), integer(1)), real_double(0.2));
+    assert(is_a<RealDouble>(*r3));
+    assert(std::abs(rcp_static_cast<const RealDouble>(r3)->i - 1.8) < 1e-12);
 }
 
 void test_mul()
@@ -176,6 +186,27 @@ void test_mul()
     r1 = mul(r1, r2);
     r2 = mul(pow(x, i2), c2);
     assert(eq(r1, r2));
+
+    r1 = mul(sqrt(x), x);
+    r2 = pow(x, div(i3, i2));
+    assert(eq(r1, r2));
+
+    r1 = mul(pow(i2, x), pow(i2, sub(div(i3, i2), x)));
+    r2 = mul(i2, pow(i2, div(one, i2)));
+    std::cout << r1->__str__() << std::endl;
+    assert(eq(r1, r2));
+
+    rc1 = Complex::from_two_nums(*one, *one);
+    r1 = pow(rc1, x);
+    r1 = mul(r1, pow(rc1, sub(div(i3, i2), x)));
+    r2 = mul(rc1, pow(rc1, div(one, i2)));
+    assert(eq(r1, r2));
+
+    r1 = real_double(0.1);
+    r2 = Rational::from_mpq(mpq_class(1, 2));
+    r2 = mul(mul(mul(r1, r2), integer(3)), real_double(0.2));
+    assert(is_a<RealDouble>(*r2));
+    assert(std::abs(rcp_static_cast<const RealDouble>(r2)->i - 0.03) < 1e-12);
 }
 
 void test_sub()
@@ -240,6 +271,12 @@ void test_sub()
     r1 = sub(r1, r2);
     r2 = mul(div(mul(I, integer(19)), integer(12)), x);
     assert(eq(r1, r2));
+
+    r1 = real_double(0.1);
+    r2 = Rational::from_mpq(mpq_class(1, 2));
+    r2 = sub(sub(sub(r1, r2), integer(3)), real_double(0.2));
+    assert(is_a<RealDouble>(*r2));
+    assert(std::abs(rcp_static_cast<const RealDouble>(r2)->i + 3.6) < 1e-12);
 }
 
 void test_div()
@@ -336,6 +373,11 @@ void test_div()
     r2 = mul(sub(div(integer(10), integer(13)), mul(I, rc3)), x);
     assert(eq(r1, r2));
 
+    r1 = real_double(0.1);
+    r2 = Rational::from_mpq(mpq_class(1, 2));
+    r2 = div(div(div(r1, r2), integer(3)), real_double(0.2));
+    assert(is_a<RealDouble>(*r2));
+    assert(std::abs(rcp_static_cast<const RealDouble>(r2)->i - 0.333333333333) < 1e-12);
 }
 
 void test_pow()
@@ -379,7 +421,7 @@ void test_pow()
     r2 = zero;
     assert(eq(r1, r2));
 
-    /* Test (x*y)^2 -> x^2*y^2 type of simplifications */
+    /* Test (x*y)**2 -> x**2*y**2 type of simplifications */
 
     r1 = pow(mul(x, y), i2);
     r2 = mul(pow(x, i2), pow(y, i2));
@@ -546,10 +588,19 @@ void test_pow()
     r1 = pow(im3, div(i4, i3));
     r2 = pow(r1, i3);
     assert(eq(r2, integer(81)));
+
+    r1 = real_double(0.1);
+    r2 = Rational::from_mpq(mpq_class(1, 2));
+    r2 = pow(r1, r2);
+    assert(is_a<RealDouble>(*r2));
+    assert(std::abs(rcp_static_cast<const RealDouble>(r2)->i - 0.316227766016) < 1e-12);
+    r2 = pow(pow(r2, integer(3)), real_double(0.2));
+    assert(std::abs(rcp_static_cast<const RealDouble>(r2)->i - 0.501187233627) < 1e-12);
 }
 
- void test_log()
- {
+void test_log()
+{
+    RCP<const Basic> x = symbol("x");
     RCP<const Basic> i2 = rcp(new Integer(2));
     RCP<const Basic> i3 = rcp(new Integer(3));
 
@@ -571,7 +622,12 @@ void test_pow()
     r1 = log(E, i2);
     r2 = div(one, log(i2));
     assert(eq(r1, r2));
- }
+
+    r1 = log(x);
+    r1 = r1->subs({{x, E}});
+    r2 = one;
+    assert(eq(r1, r2));
+}
 
 void test_multinomial()
 {
@@ -785,6 +841,15 @@ void test_expand2()
     r1 = expand(pow(add(sqrt(i2), mul(sqrt(i2), x)), i2));
     r2 = add(i2, add(mul(i4, x), mul(i2, pow(x, i2))));
     assert(eq(r1, r2));
+
+    r1 = real_double(0.2);
+    r1 = add(r1, x);
+    r2 = expand(pow(r1, i2));
+    assert(is_a<Add>(*r2));
+    auto it = rcp_static_cast<const Add>(r2)->dict_.find(x);
+    assert(it != rcp_static_cast<const Add>(r2)->dict_.end());
+    assert(is_a<RealDouble>(*it->second));
+    assert(std::abs(rcp_static_cast<const RealDouble>(it->second)->i - 0.4) < 1e-12);
 }
 
 void test_expand3()

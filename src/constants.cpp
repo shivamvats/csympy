@@ -5,7 +5,7 @@
 #include "add.h"
 #include "pow.h"
 
-namespace CSymPy {
+namespace SymEngine {
 
 Constant::Constant(const std::string &name)
     : name_{name}
@@ -28,15 +28,10 @@ bool Constant::__eq__(const Basic &o) const
 
 int Constant::compare(const Basic &o) const
 {
-    CSYMPY_ASSERT(is_a<Constant>(o))
+    SYMENGINE_ASSERT(is_a<Constant>(o))
     const Constant &s = static_cast<const Constant &>(o);
     if (name_ == s.name_) return 0;
     return name_ < s.name_ ? -1 : 1;
-}
-
-std::string Constant::__str__() const
-{
-    return name_;
 }
 
 RCP<const Basic> Constant::diff(const RCP<const Symbol> &x) const
@@ -53,7 +48,7 @@ RCP<const Constant> pi = rcp(new Constant("pi"));
 RCP<const Constant> E = rcp(new Constant("E"));
 
 // Global variables declared in functions.cpp
-// Look over https://github.com/sympy/csympy/issues/272
+// Look over https://github.com/sympy/symengine/issues/272
 // for further details
 RCP<const Basic> i2 = rcp(new Integer(2));
 
@@ -127,4 +122,4 @@ umap_basic_basic inverse_tct = {
     {minus_one, mul(minus_one, pow(i2, i2))},
 };
 
-} // CSymPy
+} // SymEngine
