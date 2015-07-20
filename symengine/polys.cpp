@@ -5,10 +5,8 @@
 
 namespace SymEngine {
 
-Polynomial::Polynomial(const vec_symbol &vars, hash_set&& polys_set) {
-    //! TODO: Use initializer list
-    vars_ = vars;
-    polys_set_ = polys_set;
+Polynomial::Polynomial(const vec_symbol &vars, hash_set&& polys_set) :
+    vars_{vars}, polys_set_(polys_set) {
     //SYMENGINE_ASSERT(is_canonical(vars_, polys_set_))
 }
 

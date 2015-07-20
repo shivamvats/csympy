@@ -31,13 +31,19 @@ public:
     //! \return true if canonical
     bool is_canonical(const hash_set& set);
     //! \return size of the hash
-    std::size_t __hash__() const;
+    std::size_t __hash__() const {
+        return 1;
+    }
     /*! Equality comparator
      * \param o - Object to be compared with
      * \return whether the 2 objects are equal
      * */
-    bool __eq__(const Basic &o) const;
-    int compare(const Basic &o) const;
+    bool __eq__(const Basic &o) const {
+        return true;
+    }
+    int compare(const Basic &o) const {
+        return 1;
+    }
 
     //! Evaluates the Polynomial at value x
     mpz_class eval(const vec_int &x) const;
@@ -45,7 +51,10 @@ public:
     //! Get the Basic from the Polynomial
     RCP<const Basic> get_basic() const;
 
-    virtual vec_basic get_args() const;
+    virtual vec_basic get_args() const {
+        vec_basic args;
+        return args;
+    }
 
     virtual void accept(Visitor &v) const;
 
