@@ -10,7 +10,7 @@
 
 #include <gmpxx.h>
 #if defined(HAVE_SYMENGINE_PIRANHA)
-#include <piranha.hpp>
+#include <piranha/piranha.hpp>
 #endif
 
 namespace SymEngine {
