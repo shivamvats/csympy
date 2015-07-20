@@ -20,11 +20,11 @@ public:
 public:
     IMPLEMENT_TYPEID(POLYNOMIAL)
     //! Constructor of Polynomial class
-    Polynomial(const vec_symbol &vars, hash_set&& polys_set);
+    Polynomial(const vec_symbol &vars, hash_set& polys_set);
     //! Constructor from Basic
     Polynomial(const RCP<const Basic> &p, umap_basic_num &vars);
 
-    static RCP<const Polynomial> create(const vec_symbol &vars, hash_set &&polys_set) {
+    static RCP<const Polynomial> create(const vec_symbol &vars, hash_set &polys_set) {
         return make_rcp<const Polynomial>(vars, polys_set);
     }
 
@@ -69,9 +69,9 @@ RCP<const Polynomial> sub_poly(const Polynomial &a, const Polynomial &b);
 //! Multiplying two Polynomial a and b
 RCP<const Polynomial> mul_poly(RCP<const Polynomial> a, RCP<const Polynomial> b);
 
-inline RCP<const Polynomial> polynomial(const vec_symbol &vars, hash_set &&polys_set)
+inline RCP<const Polynomial> polynomial(const vec_symbol &vars, hash_set &polys_set)
 {
-    return make_rcp<const Polynomial>(vars, std::move(polys_set));
+    return make_rcp<const Polynomial>(vars, polys_set);
 }
 
 }  //SymEngine
